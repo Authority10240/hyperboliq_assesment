@@ -12,7 +12,7 @@ abstract class BasePageState<T extends BasePage, B extends BaseBloc> extends Bas
   bool subscribeToVisibilityEvents = false;
   
   BasePageState({
-    this.subscribeToVisibilityEvents =false;
+    this.subscribeToVisibilityEvents =false
   });
   
  
@@ -24,17 +24,16 @@ abstract class BasePageState<T extends BasePage, B extends BaseBloc> extends Bas
       child: Scaffold(
         backgroundColor: scaffoldBackgroundColor(),
         key: _scaffoldkey,
-        appBar: BuildAppbar(),
-        bottomNavigationBar: BuildBottomNavigationBar(),
-        floatingActionButton: BuildFloatingActionButton(),
-        floatingActionButtonLocation: setFloatingActionButtonLocation(),
-        body: BuildBody(),
+        appBar: buildAppbar(),
+        bottomNavigationBar: bottomNavigationBar(),
+        floatingActionButton: floatingActionButton(),
+        body: buildView(context),
       ),
-    ),)
+    ),);
   }
 
   Future<bool> onBackPressed({dynamic param}){
-    return _onWillPop(param);
+    return _onWillPop();
   }
 
   Future<bool> _onWillPop({dynamic param}){
@@ -44,7 +43,7 @@ abstract class BasePageState<T extends BasePage, B extends BaseBloc> extends Bas
             return Future.value(false);
       }else{
         Navigator.pop(context);
-        return false
+        return Future.value(false);
       }
     }
     return Future.value(true);

@@ -4,14 +4,14 @@ class BaseState{
   DataState dataState;
 
   BaseState({
-    this.dataState = dataState.init
+    this.dataState = DataState.init
 });
 }
 
 enum DataState{
   init,
   loading,
-  reloading
+  reloading,
   success,
   error
 }

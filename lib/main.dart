@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+
+import 'package:hyperboliq/data/core/app.dart';
 
 Future<void> main() async {
-  await 
-  runApp();
+  await HyperboliqApp.appInit();
+  HyperboliqApp.run();
 }
 
 

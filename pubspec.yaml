@@ -48,12 +48,15 @@ dependencies:
   rxdart: ^0.27.7
   basic_utils: ^5.4.2
   file_picker: ^5.2.5
-  image_picker: ^0.8.6+1
+  image_picker: ^0.8.7+5
+  flutter_launcher_icons: ^0.10.0
+
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  delta_e: ^0.2.0
 
 dev_dependencies:
   flutter_test:
@@ -82,9 +85,49 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/hyperboliq_logo.jpeg
+    - assets/pictures/accordion/
+    - assets/pictures/airplanes/
+    - assets/pictures/anchor/
+    - assets/pictures/ant/
+    - assets/pictures/BACKGROUND_Google/
+    - assets/pictures/barrel/
+    - assets/pictures/bass/
+    - assets/pictures/beaver/
+    - assets/pictures/binocular/
+    - assets/pictures/cannon/
+    - assets/pictures/car_side/
+    - assets/pictures/ceiling_fan/
+    - assets/pictures/cellphone/
+    - assets/pictures/chair/
+    - assets/pictures/chandelier/
+    - assets/pictures/cougar_body/
+    - assets/pictures/cougar_face/
+    - assets/pictures/crab/
+    - assets/pictures/crayfish/
+    - assets/pictures/crocodile/
+    - assets/pictures/crocodile_head/
+    - assets/pictures/cup/
+    - assets/pictures/dalmatian/
+    - assets/pictures/dollar_bill/
+    - assets/pictures/dolphin/
+    - assets/pictures/dragonfly/
+    - assets/pictures/electric_guitar/
+    - assets/pictures/elephant/
+    - assets/pictures/emu/
+    - assets/pictures/ewer/
+    - assets/pictures/Faces/
+    - assets/pictures/Faces_easy/
+    - assets/pictures/ferry/
+    - assets/pictures/flamingo/
+    - assets/pictures/flamingo_head/
+    - assets/pictures/garfield/
+    - assets/pictures/gerenuk/
+    - assets/pictures/gramophone/
+
+    
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -111,5 +154,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  android: true
+  IOS: true
+  image_path: "assets/hyperboliq_logo.jpeg"
+
 flutter_intl:
   enabled: true
+  class_name: AppLocalizations
+  main_local: en
+  arb_dir: lib/localization
+  output_dir: lib/generated

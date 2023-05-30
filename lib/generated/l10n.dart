@@ -12,46 +12,86 @@ import 'intl/messages_all.dart';
 // ignore_for_file: join_return_with_assignment, prefer_final_in_for_each
 // ignore_for_file: avoid_redundant_argument_values, avoid_escaping_inner_quotes
 
-class S {
-  S();
+class AppLocalizations {
+  AppLocalizations();
 
-  static S? _current;
+  static AppLocalizations? _current;
 
-  static S get current {
+  static AppLocalizations get current {
     assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+        'No instance of AppLocalizations was loaded. Try to initialize the AppLocalizations delegate before accessing AppLocalizations.current.');
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
-  static Future<S> load(Locale locale) {
+  static Future<AppLocalizations> load(Locale locale) {
     final name = (locale.countryCode?.isEmpty ?? false)
         ? locale.languageCode
         : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
-      final instance = S();
-      S._current = instance;
+      final instance = AppLocalizations();
+      AppLocalizations._current = instance;
 
       return instance;
     });
   }
 
-  static S of(BuildContext context) {
-    final instance = S.maybeOf(context);
+  static AppLocalizations of(BuildContext context) {
+    final instance = AppLocalizations.maybeOf(context);
     assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+        'No instance of AppLocalizations present in the widget tree. Did you add AppLocalizations.delegate in localizationsDelegates?');
     return instance!;
   }
 
-  static S? maybeOf(BuildContext context) {
-    return Localizations.of<S>(context, S);
+  static AppLocalizations? maybeOf(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  }
+
+  /// `Hyperboliq`
+  String get splashTitle {
+    return Intl.message(
+      'Hyperboliq',
+      name: 'splashTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click to upload picture`
+  String get clickToUploadPicture {
+    return Intl.message(
+      'Click to upload picture',
+      name: 'clickToUploadPicture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click to tile picture`
+  String get clickToTilePicture {
+    return Intl.message(
+      'Click to tile picture',
+      name: 'clickToTilePicture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click to replace tiles`
+  String get clickToReplaceTiles {
+    return Intl.message(
+      'Click to replace tiles',
+      name: 'clickToReplaceTiles',
+      desc: '',
+      args: [],
+    );
   }
 }
 
-class AppLocalizationDelegate extends LocalizationsDelegate<S> {
+class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
@@ -63,7 +103,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   @override
   bool isSupported(Locale locale) => _isSupported(locale);
   @override
-  Future<S> load(Locale locale) => S.load(locale);
+  Future<AppLocalizations> load(Locale locale) => AppLocalizations.load(locale);
   @override
   bool shouldReload(AppLocalizationDelegate old) => false;
 
