@@ -4,13 +4,15 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Clone the project from this repo and run the following commmands on your IDE.
 
-A few resources to get you started if this is your first Flutter project:
+  flutter pub get;\
+   flutter pub run intl_utils:generate;\
+   flutter pub run build_runner build --delete-conflicting-outputs ;\
+   
+The Application does not require any username or password.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Once the application has loaded click on the "Click to upload image" button and upload an image from you local storage.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Once the picture has loaded, click the same button now written "click to swap picture" to implement the swapping
+
