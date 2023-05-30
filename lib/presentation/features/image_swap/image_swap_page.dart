@@ -139,7 +139,11 @@ listener: (context, state){}
         width: MediaQuery.of(context).size.width -50,
         child: Center(
           child :
-        Text(AppLocalizations.of(context).clickToUploadPicture, style: const TextStyle(color: Colors.white),),),)
+
+          state is ImageSwapPageImageSuccessState?
+            Text(AppLocalizations.of(context).clickToReplaceTiles, style: const TextStyle(color: Colors.white),)
+            :
+            Text(AppLocalizations.of(context).clickToUploadPicture, style: const TextStyle(color: Colors.white),),),)
     
     ),
     onTap: (){
