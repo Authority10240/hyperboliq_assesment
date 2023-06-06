@@ -1,8 +1,14 @@
 # hyperboliq_assesment
 
+The app runs on Flutter v3.10.3
+
 hyperboliq app runs without a need for a username and password.
 
-Once the repo has been cloned, run the following commands
+Once the repo has been cloned
+
+configure the run configuration and set the entry point to the lib\main.dart file
+
+and then run the following commands
 
     flutter pub get;\
     flutter pub run intl_utils:generate;\
