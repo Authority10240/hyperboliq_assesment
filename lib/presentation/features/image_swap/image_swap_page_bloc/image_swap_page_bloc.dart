@@ -13,70 +13,73 @@ import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:delta_e/delta_e.dart';
 
+class ImageSwapPageBloc
+    extends BaseBloc<ImageSwapPageEvent, ImageSwapPageState> {
+  final ImageSwapSelectImageUseCase imageSwapSelectImageUseCase;
+  final ImageSwapLoadDataUseCase imageSwaptLoadDataUseCase;
 
+  ImageSwapPageBloc(
+      {required this.imageSwapSelectImageUseCase,
+        required this.imageSwaptLoadDataUseCase})
+      : super(ImageSwapPageState()) {
+    on<ImageSwapPageSelectImageEvent>((event, emit) async {
+      await _onImageSwapPageSelectImageEvent(event, emit);
+    });
 
-class ImageSwapPageBloc extends BaseBloc<ImageSwapPageEvent, ImageSwapPageState> {
-final ImageSwapSelectImageUseCase imageSwapSelectImageUseCase;
-final ImageSwapLoadDataUseCase imageSwaptLoadDataUseCase;
-
-  ImageSwapPageBloc({
-    required this.imageSwapSelectImageUseCase,
-    required this.imageSwaptLoadDataUseCase}) : super(ImageSwapPageState()) {
-    on<ImageSwapPageSelectImageEvent>(
-      _onImageSwapPageSelectImageEvent
-    );
-
-    on<ImageSwapPageSwapImageEvent>(
-      _onImageSwapPageSwapImageEvent
-    );
-
-   
+    on<ImageSwapPageSwapImageEvent>((event, emit) async =>
+    await _onImageSwapPageSwapImageEvent(event, emit));
   }
-  _onImageSwapPageSwapImageEvent(
-    ImageSwapPageSwapImageEvent event,
-    Emitter<ImageSwapPageState> emit
-  )async{
-    emit(ImageSwapPageLoadDataInitState()..dataState = DataState.loading);
-     imageSwaptLoadDataUseCase.call(
+
+  Future _onImageSwapPageSwapImageEvent(
+      ImageSwapPageSwapImageEvent event,
+      Emitter<ImageSwapPageState> emit) async {
+    emit(ImageSwapPageImageLoadingState()..dataState = DataState.loading);
+    final completer = Completer<void>();
+    await  imageSwaptLoadDataUseCase.call(
       onSuccess: (model) async {
-        
+        emit(ImageSwapPageImageLoadingState()..dataState = DataState.loading);
         img.Image? image = await _decodeImage(event.imageFile);
         ColorAverages colorAverages = await _loadDataset(imagePaths: model);
 
-        img.Image? newSplitImage = await _generateNewImage(colorAverages,image, 400, event.imageFile);
-        emit(ImageSwapPageLoadDataState(image: newSplitImage)..dataState = DataState.success);
+        img.Image? newSplitImage =
+        await _generateNewImage(colorAverages, image, 400, event.imageFile);
+        emit(ImageSwapPageLoadDataState(image: newSplitImage)
+          ..dataState = DataState.success);
+        completer.complete();
       },
-      onError: (error) => emit(
-        ImageSwapPageLoadDataFailedState()..dataState = DataState.error) ,
+      onError: (error) {
+        emit(ImageSwapPageLoadDataFailedState()..dataState = DataState.error);
+        completer.complete();
+      },
     );
-
+    await completer.future;
   }
 
-     _onImageSwapPageSelectImageEvent(
-    ImageSwapPageSelectImageEvent event, 
-    Emitter<ImageSwapPageState> emit) async{
-      emit(ImageSwapPageImageLoadingState()..dataState = DataState.loading);
-   await imageSwapSelectImageUseCase.call(
-    onSuccess: (file) =>  emit(ImageSwapPageImageSuccessState(file: file)..dataState = DataState.success),
-    onError: (error) => emit(ImageSwapPageImageFailureState()..dataState = DataState.error),
-   );
+  Future _onImageSwapPageSelectImageEvent(ImageSwapPageSelectImageEvent event,
+      Emitter<ImageSwapPageState> emit) async {
+    emit(ImageSwapPageImageLoadingState()..dataState = DataState.loading);
+    await imageSwapSelectImageUseCase.call(onSuccess: (file) {
+      emit(ImageSwapPageImageSuccessState(file: file)
+        ..dataState = DataState.success);
+    }, onError: (error) {
+      emit(ImageSwapPageImageFailureState()..dataState = DataState.error);
+    });
   }
 
-  Future<img.Image?> _decodeImage(XFile imageFile) async{
-      Uint8List imageBytes = await imageFile.readAsBytes();
-        return await img.decodeImage(imageBytes);
+  Future<img.Image?> _decodeImage(XFile imageFile) async {
+    Uint8List imageBytes = await imageFile.readAsBytes();
+    return img.decodeImage(imageBytes);
   }
 
-   //All out logic is in this method
+  //All out logic is in this method
   // Step 2: Divide our input image in 20x20 parts
-  Future<img.Image> _splitImage({
-    required int widthCount, 
-    required int heightCount,
-    required XFile imageFile,
-    required List<Color> datasetAvgRgbs,   
-    required final List<String> imageDataset,   
-    required final List<img.Image> imageTiles }) async {
-
+  Future<img.Image> _splitImage(
+      {required int widthCount,
+        required int heightCount,
+        required XFile imageFile,
+        required List<Color> datasetAvgRgbs,
+        required final List<String> imageDataset,
+        required final List<img.Image> imageTiles}) async {
     Uint8List imageList = await imageFile.readAsBytes();
 
     img.Image? decodedImage = img.decodeImage(imageList);
@@ -108,7 +111,7 @@ final ImageSwapLoadDataUseCase imageSwaptLoadDataUseCase;
         }
 
         ByteData byteData =
-            await rootBundle.load(imageDataset[shortestValueIndex]);
+        await rootBundle.load(imageDataset[shortestValueIndex]);
 
         Uint8List bytes = byteData.buffer.asUint8List();
 
@@ -129,77 +132,69 @@ final ImageSwapLoadDataUseCase imageSwaptLoadDataUseCase;
     return newCreatedImage!;
   }
 
-  Future<img.Image> _generateNewImage(ColorAverages colorAverages,var image, int tileSize,XFile imageFile) async {
-     
-    List<Color> datasetAvgRgbs = []; 
-    final List<String> imageDataset = []; 
+  Future<img.Image> _generateNewImage(ColorAverages colorAverages, var image,
+      int tileSize, XFile imageFile) async {
     final List<img.Image> imageTiles = [];
 
     img.Image newSplitImage = await _splitImage(
-      heightCount: 20,
-      widthCount:20,
-      imageDataset: colorAverages.imageDataset,
-      datasetAvgRgbs:colorAverages.datasetAvgRgbs,
-      imageFile: imageFile,
-      imageTiles: imageTiles );
-    img.Image newImage = newSplitImage;
+        heightCount: 20,
+        widthCount: 20,
+        imageDataset: colorAverages.imageDataset,
+        datasetAvgRgbs: colorAverages.datasetAvgRgbs,
+        imageFile: imageFile,
+        imageTiles: imageTiles);
+    //  img.Image newImage = newSplitImage;
 
     return newSplitImage;
-
   }
 
-  Future<ColorAverages> _loadDataset({required dynamic imagePaths
-     }) async {
+  Future<ColorAverages> _loadDataset({required dynamic imagePaths}) async {
+    List<String> imageDataset = [];
+    List<Color> datasetAvgRgbs = [];
+    for (var path in imagePaths) {
+      ByteData byteData = await rootBundle.load(path);
 
-        List<String> imageDataset =[];
-        List<Color> datasetAvgRgbs =[];
-      for (var path in imagePaths) {
-        ByteData byteData = await rootBundle.load(path);
+      Uint8List bytes = byteData.buffer.asUint8List();
 
-        Uint8List bytes = byteData.buffer.asUint8List();
+      img.Image? decodedImage = img.decodeImage(bytes);
 
-        img.Image? decodedImage = img.decodeImage(bytes);
-
-        //Step 1: Calculate avg RGB for each tile image from our assets folder (Avg R, Avg G, Avg B)
-        Color avgRgb = getAverageRBG(decodedImage!);
-        datasetAvgRgbs.add(avgRgb);
-        imageDataset.add(path);
-      }
-
-      return ColorAverages(datasetAvgRgbs: datasetAvgRgbs, imageDataset: imageDataset, imageTiles: []);
+      //Step 1: Calculate avg RGB for each tile image from our assets folder (Avg R, Avg G, Avg B)
+      Color avgRgb = getAverageRBG(decodedImage!);
+      datasetAvgRgbs.add(avgRgb);
+      imageDataset.add(path);
     }
-  
+
+    return ColorAverages(
+        datasetAvgRgbs: datasetAvgRgbs,
+        imageDataset: imageDataset,
+        imageTiles: []);
+  }
 
   Color getAverageRBG(img.Image image) {
-  int redBucket = 0;
-  int greenBucket = 0;
-  int blueBucket = 0;
-  int pixelCount = 0;
+    int redBucket = 0;
+    int greenBucket = 0;
+    int blueBucket = 0;
+    int pixelCount = 0;
 
-  for (int y = 0; y < image.height; y++) {
-    for (int x = 0; x < image.width; x++) {
-      int c = image.getPixel(x, y);
+    for (int y = 0; y < image.height; y++) {
+      for (int x = 0; x < image.width; x++) {
+        int c = image.getPixel(x, y);
 
-      pixelCount++;
-      redBucket += img.getRed(c);
-      greenBucket += img.getGreen(c);
-      blueBucket += img.getBlue(c);
+        pixelCount++;
+        redBucket += img.getRed(c);
+        greenBucket += img.getGreen(c);
+        blueBucket += img.getBlue(c);
+      }
     }
+    Color averageColor = Color.fromRGBO(redBucket ~/ pixelCount,
+        greenBucket ~/ pixelCount, blueBucket ~/ pixelCount, 1);
+
+    return averageColor;
   }
-  Color averageColor = Color.fromRGBO(redBucket ~/ pixelCount,
-      greenBucket ~/ pixelCount, blueBucket ~/ pixelCount, 1);
 
-  return averageColor;
+  double getDeltaE(Color color1, Color color2) {
+    LabColor lab1 = LabColor.fromRGB(color1.red, color1.green, color1.blue);
+    LabColor lab2 = LabColor.fromRGB(color2.red, color2.green, color2.blue);
+    return deltaE(lab1, lab2, algorithm: DeltaEAlgorithm.cie76);
+  }
 }
-
-double getDeltaE(Color color1, Color color2) {
-  LabColor lab1 = LabColor.fromRGB(color1.red, color1.green, color1.blue);
-  LabColor lab2 = LabColor.fromRGB(color2.red, color2.green, color2.blue);
-  return deltaE(lab1, lab2, algorithm: DeltaEAlgorithm.cie76);
-}
-
-}
-
-  
-
-  
